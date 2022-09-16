@@ -1,6 +1,7 @@
 use axum::extract::Path;
 use axum::{routing::get, Router};
 use axum::handler::Handler;
+use serde_json::{json, Value};
 
 #[tokio::main]
 async fn main() {
@@ -33,8 +34,9 @@ pub async fn get_usuario_by_id(axum::extract::Path(id):axum::extract::Path<Strin
     format!("Usuario con id {}",id)
 }
 
-pub async fn get_usuario_by_id_name(Path((id,nombre,edad)): Path<(String,String,u128)>) -> String {
-    format!("Id: {} Nombre: {} Edad: {}",id,nombre,edad)
+pub async fn get_usuario_by_id_name(Path((id,nombre,edad)): Path<(String,String,String)>) -> axum::extract::Json<Value> {
+    json!({"Id":id,"Nombre":nombre,"Edad":edad}).into()
+    // format!("Id: {} Nombre: {} Edad: {}",id,nombre,edad)
 }
 
 pub async fn get_usuarios() -> String {
