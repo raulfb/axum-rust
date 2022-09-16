@@ -1,3 +1,4 @@
+use axum::extract::Path;
 use axum::{routing::get, Router};
 use axum::handler::Handler;
 
@@ -8,7 +9,8 @@ async fn main() {
         .fallback(fallback.into_service())
         .route("/", get(get_raiz))
         .route("/usuarios", get(get_usuarios))
-        .route("/usuario/:id", get(get_usuario))
+        .route("/usuario/:id", get(get_usuario_by_id))
+        .route("/usuario/:id/nombre/:nombre/edad/:edad",get(get_usuario_by_id_name))
         .route("/contacto", get(get_contacto))
         .route("/estado", get(get_con_estado));
 
@@ -27,8 +29,12 @@ pub async fn get_raiz() -> String {
     String::from("raiz")
 }
 
-pub async fn get_usuario(axum::extract::Path(id):axum::extract::Path<String>) -> String {
+pub async fn get_usuario_by_id(axum::extract::Path(id):axum::extract::Path<String>) -> String {
     format!("Usuario con id {}",id)
+}
+
+pub async fn get_usuario_by_id_name(Path((id,nombre,edad)): Path<(String,String,u128)>) -> String {
+    format!("Id: {} Nombre: {} Edad: {}",id,nombre,edad)
 }
 
 pub async fn get_usuarios() -> String {
