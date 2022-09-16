@@ -1,10 +1,11 @@
+use axum::{routing::get, Router};
+use axum::handler::Handler;
+
 #[tokio::main]
 async fn main() {
-
-    use axum::{Router, routing::get};
-
     // Rutas
     let app = Router::new()
+        .fallback(fallback.into_service())
         .route("/", get(get_raiz))
         .route("/usuarios", get(get_usuarios))
         .route("/contacto", get(get_contacto));
@@ -19,10 +20,14 @@ async fn main() {
 async fn get_raiz() -> String {
     String::from("raiz")
 }
-async fn get_usuarios()->String {
+async fn get_usuarios() -> String {
     String::from("Ususarios")
-
 }
-async fn get_contacto()-> String {
+async fn get_contacto() -> String {
     String::from("Contacto")
 }
+
+pub async fn fallback(uri: axum::http::Uri) -> impl axum::response::IntoResponse {(
+    axum::http::StatusCode::NOT_FOUND,
+    format!("No existe la ruta: {}", uri),
+)}
